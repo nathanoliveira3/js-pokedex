@@ -1,7 +1,10 @@
 const pokemonList = document.getElementById('pokemonList')
 const loadMoreButton = document.getElementById('loadMoreButton')
-const content = document.querySelector('.content')
+const content = document.querySelector('.modal-content')
+const modalContainer = document.getElementById("myModal")
 const moreInformation = document.querySelector('.more')
+const span = document.getElementsByClassName("close")[0]
+const modal = document.querySelector('.modal')
 
 const maxRecords = 151
 const limit = 10
@@ -52,24 +55,35 @@ loadMoreButton.addEventListener('click', () => {
 function loadInformation(pokemon) {
     return `
         <div class="info">
-            <h2>Pokemon</h2>
-            <ul>
+            <h2>${pokemon.name.toUpperCase()}</h2>
+            <h3>HABILIDADES</h3>
+            <ul class="abilities">
                 ${pokemon.abilities.map((type) => `<li  ${type}">${type.ability.name}</li>`).join('')}
             </ul>
-            <ul>
+            <h3>MOVIMENTOS</h3>
+            <ul class="moves">
                 ${pokemon.moves.map((type) => `<li  ${type}">${type.move.name}</li>`).join('')}
             </ul>
+           
+            <div class="images">                       
+            <img class="image" src=${pokemon.sprites.back_default}>            
+            <img class="image" src=${pokemon.sprites.front_default}>            
+                       
+            </div>
         </div>
+        
     `
 }
 
 function createHTML(name) {    
-    const response = requestPokemon(name)
-        //.then(response => console.log(response))        
-        .then(response => content.innerHTML += loadInformation(response))
-        
-    //const newHtml = loadInformation(response)
-    //content.innerHTML += newHtml    
+    const response = requestPokemon(name)  
+        //.then(response => console.log(response))           
+        .then(response => {
+            content.innerHTML += loadInformation(response)
+            modal.classList.add(response.types[0].type.name)
+        })        
+    
+    modalContainer.style.display = "block";
 }
 
 function requestPokemon(name) {
@@ -78,3 +92,8 @@ function requestPokemon(name) {
     .then((response) => response.json())    
 }
 
+span.onclick = function() {
+    modalContainer.style.display = "none";
+    content.innerHTML = ''
+    modal.className = 'modal'
+}
